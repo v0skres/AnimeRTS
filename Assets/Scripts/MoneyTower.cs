@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 
 
-public class MoneyTower : MonoBehaviour
+public class MoneyTower : MonoBehaviour, ITower
 {
     //FIELDS
     public int health;
@@ -45,9 +45,9 @@ public class MoneyTower : MonoBehaviour
     }
 
 
-    public void LoseHealth()
+    public void LoseHealth(int damage)
     {
-        health--;
+        health -= damage;
 
         if (health <= 0)
         {
@@ -56,7 +56,7 @@ public class MoneyTower : MonoBehaviour
     }
 
 
-    void Die()
+    public void Die()
     {
         Debug.Log("MoneyTower is Dead");
         Destroy(gameObject);

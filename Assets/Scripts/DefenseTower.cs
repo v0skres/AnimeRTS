@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DefenseTower : MonoBehaviour
+public class DefenseTower : MonoBehaviour, ITower
 {
     //FIELDS
     public int health;
@@ -13,9 +13,9 @@ public class DefenseTower : MonoBehaviour
 
     }
 
-    public void LoseHealth()
+    public void LoseHealth(int damage)
     {
-        health--;
+        health -= damage;
 
         if (health <= 0)
         {
@@ -24,7 +24,7 @@ public class DefenseTower : MonoBehaviour
     }
 
 
-    void Die()
+    public void Die()
     {
         Debug.Log("DefenseTower is Dead");
         Destroy(gameObject);

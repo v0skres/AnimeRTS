@@ -10,12 +10,14 @@ public class GameManager : MonoBehaviour
     public HealthSystem health;
     public CurrencySystem currency;
     public ManaSystem mana;
+    public EnemyManager enemyManager;
 
     void Start()
     {
         GetComponent<HealthSystem>().Init();
         GetComponent<CurrencySystem>().Init();
         GetComponent<ManaSystem>().Init();
+        GetComponent<EnemyManager>().Init();
 
         StartCoroutine(WaveStartDelay());
     }

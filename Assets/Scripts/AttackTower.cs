@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AttackTower : MonoBehaviour
+public class AttackTower : MonoBehaviour, ITower 
 {
     //FIELDS
     public int health;
@@ -36,9 +36,9 @@ public class AttackTower : MonoBehaviour
         shotItem.GetComponent<ShootItem>().Init(damage);
     }
 
-    public void LoseHealth()
+    public void LoseHealth(int damage)
     {
-        health--;
+        health -= damage;
 
         if (health <= 0)
         {

@@ -21,10 +21,10 @@ public class LaserBeam : MonoBehaviour
     //Trigger with enemy
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.tag == "Enemy")
+        if (collision.TryGetComponent(out IEnemy enemy))
         {
             Debug.Log("Shot the enemy");
-            //collision.GetComponent<Enemy>().LoseHealth();
+            enemy.TakeDamage(damage);
             Destroy(gameObject);
         }
         if (collision.tag == "Out")
