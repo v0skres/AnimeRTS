@@ -37,13 +37,29 @@ public class Enemy : MonoBehaviour, IEnemy
 
     [SerializeField] private bool _isAlive;
 
-    public float CurrentLine
+    public Line CurrentLine
     {
         get => _currentLine;
         set => _currentLine = value;
     }
 
-    [SerializeField] private float _currentLine;
+    [SerializeField] private Line _currentLine;
+
+    public EnemyType Type
+    {
+        get => _type;
+        protected set => _type = value;
+    }
+
+    [SerializeField] private EnemyType _type;
+
+    public int Weight
+    {
+        get => _weight;
+        protected set => _weight = value;
+    }
+
+    [SerializeField] private int _weight;
 
     public event EventHandler Death;
 
@@ -87,8 +103,9 @@ public class Enemy : MonoBehaviour, IEnemy
     {
         if (IsAlive)
         {
-            transform.position = new Vector3(transform.position.x, CurrentLine);
-            transform.position = Vector3.MoveTowards(transform.position, new Vector3(-10000, CurrentLine), Time.deltaTime * Speed);
+            var linePos = CurrentLine.PositionY + CurrentLine.LineOffset;
+            transform.position = new Vector3(transform.position.x, linePos);
+            transform.position = Vector3.MoveTowards(transform.position, new Vector3(-10000, linePos), Time.deltaTime * Speed);
         }
     }
 

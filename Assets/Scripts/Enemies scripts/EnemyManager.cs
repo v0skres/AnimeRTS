@@ -4,21 +4,28 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+[Serializable]
+public class Line
+{
+    public int PositionY;
+
+    public float LineOffset = 0.5f;
+
+    public int MaxEnemiesWeight;
+
+    public int EnemiesWeightSum => Enemies.Sum(x => x.Weight);
+
+    public List<Enemy> Enemies = new List<Enemy>();
+}
+
 public class EnemyManager : MonoBehaviour
 {
     public List<GameObject> EnemyCollection = new List<GameObject>();
-    public Dictionary<float, List<Enemy>> Enemies = new Dictionary<float, List<Enemy>>();
-    public float[] Lines = new float[4]
-    {
-        2.5f,
-        3.5f,
-        4.5f,
-        5.5f
-    };
+    public List<Line> Lines = new List<Line>();
+    public int SpawnInterval;
 
     public void Init()
     {
-
     }
 
     void Start()
@@ -36,32 +43,37 @@ public class EnemyManager : MonoBehaviour
     {
         while (true)
         {
-            float line = UnityEngine.Random.Range(0f, Lines.LastOrDefault());
+            if (Lines.All(x => x.EnemiesWeightSum >= x.MaxEnemiesWeight))
+            {
+                Debug.Log("All lines taken");
+                yield return new WaitForSeconds(SpawnInterval);
+                continue;
+            }
+
             foreach (var enemyPrefab in EnemyCollection)
             {
-                var enemyComponent = Instantiate(enemyPrefab, new Vector3(7, line), new Quaternion()).GetComponent<Enemy>();
-                enemyComponent.CurrentLine = line;
-                enemyComponent.Death += EnemyComponent_Death;
-                if (Enemies.ContainsKey(line))
+                var line = Lines[UnityEngine.Random.Range(0, Lines.Count)];
+                Debug.Log(line.EnemiesWeightSum);
+                if (line.EnemiesWeightSum >= line.MaxEnemiesWeight)
                 {
-                    Enemies[line].Add(enemyComponent);
-                }
-                else
-                {
-                    Enemies.Add(line, new List<Enemy> { enemyComponent });
+                    continue;
                 }
 
-                line++;
-                yield return new WaitForSeconds(5);
+                var enemyComponent = Instantiate(enemyPrefab, new Vector3(7, line.PositionY + line.LineOffset), new Quaternion()).GetComponent<Enemy>();
+                enemyComponent.CurrentLine = line;
+                enemyComponent.Death += EnemyComponent_Death;
+                line.Enemies.Add(enemyComponent);
+
+                yield return new WaitForSeconds(SpawnInterval);
             }
         }
     }
 
     private void EnemyComponent_Death(object sender, EventArgs e)
     {
-        if (sender is Enemy enemy && Enemies.ContainsKey(enemy.CurrentLine))
+        if (sender is Enemy enemy)
         {
-            Enemies[enemy.CurrentLine].Remove(enemy);
+            enemy.CurrentLine.Enemies.Remove(enemy);
         }
     }
 }

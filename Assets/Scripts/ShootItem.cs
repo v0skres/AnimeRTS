@@ -19,7 +19,7 @@ public class ShootItem : MonoBehaviour
     //Trigger with enemy
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.TryGetComponent<IEnemy>(out IEnemy enemy))
+        if (collision.TryGetComponent(out IEnemy enemy))
         {
             Debug.Log("Shot the enemy");
             enemy.TakeDamage(damage);
