@@ -1,9 +1,11 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour, IEnemy
 {
-    // Максимальное ХП.
     public int MaxHealth
     {
         get => _maxHealth;
@@ -32,12 +34,12 @@ public class Enemy : MonoBehaviour, IEnemy
     }
     [SerializeField] private int _damage;
 
-    public int AttackSpeed
+    public float AttackSpeed
     {
         get => _attackSpeed;
         protected set => _attackSpeed = value;
     }
-    [SerializeField] private int _attackSpeed = 1;
+    [SerializeField] private float _attackSpeed = 1;
 
     public int AttackRange
     {
@@ -66,13 +68,6 @@ public class Enemy : MonoBehaviour, IEnemy
         set => _currentLine = value;
     }
     [SerializeField] private Line _currentLine;
-
-    public EnemyType Type
-    {
-        get => _type;
-        protected set => _type = value;
-    }
-    [SerializeField] private EnemyType _type;
 
     public int Weight
     {
@@ -130,8 +125,42 @@ public class Enemy : MonoBehaviour, IEnemy
         }
     }
 
+    public virtual void Attack(ITower tower)
+    {
+        tower.LoseHealth(Damage);
+    }
+
     protected virtual void OnDeath(object sender, EventArgs e)
     {
         Death?.Invoke(this, e);
+    }
+
+    protected virtual void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.TryGetComponent(out ITower tower))
+        {
+            CanMove = false;
+
+            StartCoroutine(AttackCoroutine(tower));
+        }
+    }
+
+    protected virtual void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.gameObject.TryGetComponent(out ITower tower))
+        {
+            CanMove = true;
+
+            StopCoroutine(AttackCoroutine(tower));
+        }
+    }
+
+    protected IEnumerator AttackCoroutine(ITower tower)
+    {
+        while (true)
+        {
+            Attack(tower);
+            yield return new WaitForSeconds(AttackSpeed);
+        }
     }
 }

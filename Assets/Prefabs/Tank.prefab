@@ -47,18 +47,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d491e3813a8380844b81e1571b2c121a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _maxHealth: 25
-  _currentHealth: 25
-  _speed: 0.25
+  _maxHealth: 200
+  _currentHealth: 200
+  _speed: 0.5
+  _damage: 15
+  _attackSpeed: 1
+  _attackRange: 1
   _isAlive: 1
+  _canMove: 1
   _currentLine:
     PositionY: 0
     LineOffset: 0.5
     MaxEnemiesWeight: 0
-    _enemiesWeightSum: 0
     Enemies: []
   _type: 1
-  _weight: 2
+  _weight: 5
 --- !u!212 &1946895442247256258
 SpriteRenderer:
   m_ObjectHideFlags: 0

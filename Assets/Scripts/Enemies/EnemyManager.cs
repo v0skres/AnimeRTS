@@ -20,25 +20,32 @@ public class Line
 
 public class EnemyManager : MonoBehaviour
 {
+    public static EnemyManager Instance { get; private set; }
+
     public List<GameObject> EnemyCollection = new List<GameObject>();
     public List<Line> Lines = new List<Line>();
     public int SpawnInterval;
 
     public void Init()
     {
+        Instance = this;
     }
 
     void Start()
     {
-        StartCoroutine(SpawnEnemy());
+        StartCoroutine(SpawnEnemyCoroutine());
     }
 
-    void Update()
+    public GameObject SpawnEnemy(GameObject enemyPrefab, Line line, Vector3? pos = null)
     {
-        
+        var enemyComponent = Instantiate(enemyPrefab, pos ?? new Vector3(7, line.PositionY + line.LineOffset), new Quaternion()).GetComponent<Enemy>();
+        enemyComponent.CurrentLine = line;
+        enemyComponent.Death += EnemyComponent_Death;
+        line.Enemies.Add(enemyComponent);
+        return enemyComponent.gameObject;
     }
 
-    private IEnumerator SpawnEnemy()
+    private IEnumerator SpawnEnemyCoroutine()
     {
         while (true)
         {
@@ -58,10 +65,7 @@ public class EnemyManager : MonoBehaviour
                     continue;
                 }
 
-                var enemyComponent = Instantiate(enemyPrefab, new Vector3(7, line.PositionY + line.LineOffset), new Quaternion()).GetComponent<Enemy>();
-                enemyComponent.CurrentLine = line;
-                enemyComponent.Death += EnemyComponent_Death;
-                line.Enemies.Add(enemyComponent);
+                SpawnEnemy(enemyPrefab, line);
 
                 yield return new WaitForSeconds(SpawnInterval);
             }

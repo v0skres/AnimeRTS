@@ -8918,14 +8918,27 @@ MonoBehaviour:
   - {fileID: 7623389854573266923, guid: 43084b616848f5f45a896990015b9f03, type: 3}
   - {fileID: 593104485279746973, guid: 94187eefaef3de24babf4f966d9c9773, type: 3}
   - {fileID: 4671500839189169925, guid: c8887f8095adb1b44bf743fae6cccb92, type: 3}
+  - {fileID: 6251693865365035917, guid: 057659dac93a3994c96a5c63d4d9bab6, type: 3}
   Lines:
+  - PositionY: -2
+    LineOffset: 0.5
+    MaxEnemiesWeight: 20
+    Enemies: []
+  - PositionY: -1
+    LineOffset: 0.5
+    MaxEnemiesWeight: 20
+    Enemies: []
   - PositionY: 0
     LineOffset: 0.5
-    MaxEnemiesWeight: 10
+    MaxEnemiesWeight: 20
     Enemies: []
   - PositionY: 1
     LineOffset: 0.5
-    MaxEnemiesWeight: 5
+    MaxEnemiesWeight: 20
+    Enemies: []
+  - PositionY: 2
+    LineOffset: 0.5
+    MaxEnemiesWeight: 20
     Enemies: []
   SpawnInterval: 5
 --- !u!1 &1787936151

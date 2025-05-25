@@ -98,7 +98,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77712f564b9641049b8c9d818f6194bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 2
+  health: 50
   incomeValue: 4
   interval: 5
   obj_coin: {fileID: 6184519623062983734}

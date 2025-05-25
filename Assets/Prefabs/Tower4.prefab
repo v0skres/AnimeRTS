@@ -98,9 +98,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 947316ead803de249aa5f81f30810daa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 3
+  health: 50
   cost: 4
-  damage: 1
+  damage: 10
   prefab_laserBeam: {fileID: 4126315838771462500, guid: 71254ee261487ec46a57dde68842d7ab, type: 3}
   interval: 3
 --- !u!61 &-857110861123386309

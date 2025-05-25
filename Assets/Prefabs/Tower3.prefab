@@ -98,9 +98,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0eed765742e2fc54db7ff88fcef2e1fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 4
+  health: 50
   cost: 4
-  damage: 2
+  damage: 10
   prefab_shootItem: {fileID: 6104334504788347281, guid: bab87be720660464ea3d96da8df21cca, type: 3}
   interval: 4
 --- !u!61 &62229102606018091

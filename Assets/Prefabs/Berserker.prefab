@@ -99,20 +99,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9f4bb3b151cb8d49a520124d750d9e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _maxHealth: 5
-  _currentHealth: 5
+  _maxHealth: 75
+  _currentHealth: 75
   _speed: 1.5
-  _damage: 0
-  _attackSpeed: 1
-  _attackRange: 0
+  _damage: 5
+  _attackSpeed: 2
+  _attackRange: 1
   _isAlive: 1
+  _canMove: 1
   _currentLine:
     PositionY: 0
     LineOffset: 0.5
     MaxEnemiesWeight: 0
     Enemies: []
-  _type: 4
-  _weight: 2
+  _type: 3
+  _weight: 20
   _armor: 2
   _isEnraged: 0
 --- !u!50 &2126171817950992783

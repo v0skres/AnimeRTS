@@ -9,13 +9,6 @@ using UnityEngine;
 // преимущество перед берсерком.
 public class ZombieBerserker : Enemy
 {
-    // Статы:
-    // Вес: 
-    // ХП: 
-    // Скорость предвижения:  кл/сек
-    // Урон: 
-    // Скорость атаки:  сек/атака
-
     [SerializeField] private int _armor = 2;
     [SerializeField] private bool _isEnraged;
 

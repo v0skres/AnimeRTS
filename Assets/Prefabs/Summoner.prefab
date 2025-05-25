@@ -71,11 +71,11 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -336608367
+  m_SortingLayer: 2
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 5dc69e8d32bb342459281f0124d9ccbf, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 0.9753064, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -94,20 +94,22 @@ MonoBehaviour:
   m_GameObject: {fileID: 6251693865365035917}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fc01dde2f53df584288bc25a7ed12649, type: 3}
+  m_Script: {fileID: 11500000, guid: a65ab7564b2242d479b66d58ebd1405a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _maxHealth: 0
-  _currentHealth: 0
-  _speed: 0
-  _damage: 0
-  _attackSpeed: 0
+  _maxHealth: 50
+  _currentHealth: 50
+  _speed: 1
+  _damage: 5
+  _attackSpeed: 1
   _attackRange: 1
-  _isAlive: 0
+  _isAlive: 1
+  _canMove: 1
   _currentLine:
     PositionY: 0
     LineOffset: 0.5
     MaxEnemiesWeight: 0
     Enemies: []
-  _type: 3
-  _weight: 0
+  _weight: 10
+  SummonInterval: 10
+  SummonTime: 3
