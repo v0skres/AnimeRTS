@@ -1,16 +1,14 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour, IEnemy
 {
+    // Максимальное ХП.
     public int MaxHealth
     {
         get => _maxHealth;
         protected set => _maxHealth = value;
     }
-
     [SerializeField] private int _maxHealth;
 
     public int CurrentHealth
@@ -18,31 +16,55 @@ public class Enemy : MonoBehaviour, IEnemy
         get => _currentHealth;
         protected set => _currentHealth = value;
     }
-
     [SerializeField] private int _currentHealth;
 
-    public float Speed
+    public virtual float Speed
     {
         get => _speed;
         protected set => _speed = value;
     }
-
     [SerializeField] private float _speed;
+
+    public int Damage
+    {
+        get => _damage;
+        protected set => _damage = value;
+    }
+    [SerializeField] private int _damage;
+
+    public int AttackSpeed
+    {
+        get => _attackSpeed;
+        protected set => _attackSpeed = value;
+    }
+    [SerializeField] private int _attackSpeed = 1;
+
+    public int AttackRange
+    {
+        get => _attackRange;
+        protected set => _attackRange = value;
+    }
+    [SerializeField] private int _attackRange;
 
     public bool IsAlive
     {
         get => _isAlive;
         protected set => _isAlive = value;
     }
-
     [SerializeField] private bool _isAlive;
+
+    public bool CanMove
+    {
+        get => _canMove;
+        protected set => _canMove = value;
+    }
+    [SerializeField] private bool _canMove = true;
 
     public Line CurrentLine
     {
         get => _currentLine;
         set => _currentLine = value;
     }
-
     [SerializeField] private Line _currentLine;
 
     public EnemyType Type
@@ -50,7 +72,6 @@ public class Enemy : MonoBehaviour, IEnemy
         get => _type;
         protected set => _type = value;
     }
-
     [SerializeField] private EnemyType _type;
 
     public int Weight
@@ -58,7 +79,6 @@ public class Enemy : MonoBehaviour, IEnemy
         get => _weight;
         protected set => _weight = value;
     }
-
     [SerializeField] private int _weight;
 
     public event EventHandler Death;
@@ -95,13 +115,14 @@ public class Enemy : MonoBehaviour, IEnemy
     {
         CurrentHealth = 0;
         IsAlive = false;
+        CurrentLine.Enemies.Remove(this);
         OnDeath(this, new EventArgs());
         Destroy(gameObject);
     }
 
     public virtual void Move()
     {
-        if (IsAlive)
+        if (IsAlive && CanMove)
         {
             var linePos = CurrentLine.PositionY + CurrentLine.LineOffset;
             transform.position = new Vector3(transform.position.x, linePos);

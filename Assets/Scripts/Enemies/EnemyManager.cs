@@ -33,7 +33,6 @@ public class EnemyManager : MonoBehaviour
         StartCoroutine(SpawnEnemy());
     }
 
-    // Update is called once per frame
     void Update()
     {
         
@@ -73,7 +72,6 @@ public class EnemyManager : MonoBehaviour
     {
         if (sender is Enemy enemy)
         {
-            enemy.CurrentLine.Enemies.Remove(enemy);
         }
     }
 }
