@@ -2,20 +2,38 @@ using UnityEngine;
 
 public class ShootItem : MonoBehaviour
 {
-    //FIELDS
-    //graphics (the sprite renderer)
+    [Header("Настройки")]
     public Transform graphics;
-    //damage
     public int damage;
-    //speed
-    public float flySpeed, rotateSpeed;
+    public float flySpeed;
+    public float rotateSpeed;
+
+    [Header("Физика")]
+    public bool usePhysics = false; // Если нужно физическое движение
+    private Rigidbody2D rb;
 
     //METHODS
     //Init
-    public void Init(int dmg)
+    private void Start()
     {
-        damage = dmg;
+        if (usePhysics)
+        {
+            rb = GetComponent<Rigidbody2D>();
+            if (rb == null)
+            {
+                rb = gameObject.AddComponent<Rigidbody2D>();
+                rb.gravityScale = 0;
+                rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+            }
+            rb.velocity = transform.right * flySpeed;
+        }
     }
+
+    public void Init(int damageAmount)
+    {
+        damage = damageAmount;
+    }
+
     //Trigger with enemy
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -23,18 +41,31 @@ public class ShootItem : MonoBehaviour
         {
             Debug.Log("Shot the enemy");
             enemy.TakeDamage(damage);
-            Destroy(gameObject);
+            DestroyProjectile();
         }
         if (collision.CompareTag("Out"))
         {
-            Destroy(gameObject);
+            DestroyProjectile();
         }
     }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.TryGetComponent(out IEnemy enemy))
+        {
+            enemy.TakeDamage(damage);
+            DestroyProjectile();
+        }
+    }
+
     //Handle rotation and flying
     void Update()
     {
-        Rotate();
-        FlyForward();
+        if (!usePhysics)
+        {
+            Rotate();
+            FlyForward();
+        }
     }
     void Rotate()
     {
@@ -42,7 +73,15 @@ public class ShootItem : MonoBehaviour
     }
     void FlyForward()
     {
-        transform.Translate(transform.right * flySpeed * Time.deltaTime);
+        transform.Translate(transform.right * flySpeed * Time.deltaTime, Space.World);
     }
 
+    void DestroyProjectile()
+    {
+        // Отключаем коллайдер перед уничтожением
+        var collider = GetComponent<Collider2D>();
+        if (collider != null) collider.enabled = false;
+
+        Destroy(gameObject);
+    }
 }

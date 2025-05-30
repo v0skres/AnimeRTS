@@ -49,8 +49,13 @@ public class Spawner : MonoBehaviour, IPointerClickHandler
     void SelectTowerForMove(GameObject tower)
     {
         selectedTower = tower;
-        // Визуальная подсветка (например, измените цвет)
-        tower.GetComponent<SpriteRenderer>().color = Color.yellow;
+        var renderer = tower.GetComponent<SpriteRenderer>();
+        renderer.color = Color.yellow;
+
+        // Показываем допустимую ось перемещения
+        Debug.DrawLine(tower.transform.position + Vector3.up * 3f,
+                      tower.transform.position + Vector3.down * 3f,
+                      Color.green, 2f);
     }
 
     void MoveTower(Vector3 newPos)
@@ -61,12 +66,19 @@ public class Spawner : MonoBehaviour, IPointerClickHandler
         Vector3Int oldCell = spawnTilemap.WorldToCell(selectedTower.transform.position);
         spawnTilemap.SetColliderType(oldCell, Tile.ColliderType.Sprite);
 
-        // Ставим башню в центр новой клетки
-        selectedTower.transform.position = newPos;
+        // Фиксируем X-координату, оставляем только вертикальное перемещение (Y)
+        Vector3 restrictedPos = new Vector3(
+            selectedTower.transform.position.x, // Сохраняем исходную X-координату
+            newPos.y,                          // Берем новую Y-координату
+            newPos.z                           // Z можно оставить как есть
+        );
 
         // Отключаем коллайдер новой клетки
-        Vector3Int newCell = spawnTilemap.WorldToCell(newPos);
+        Vector3Int newCell = spawnTilemap.WorldToCell(restrictedPos);
         spawnTilemap.SetColliderType(newCell, Tile.ColliderType.None);
+
+        // Перемещаем башню
+        selectedTower.transform.position = restrictedPos;
 
         // Снимаем выделение
         selectedTower.GetComponent<SpriteRenderer>().color = Color.white;
@@ -125,6 +137,7 @@ public class Spawner : MonoBehaviour, IPointerClickHandler
             case 1: return towersPrefabs[id].GetComponent<DefenseTower>().cost;
             case 2: return towersPrefabs[id].GetComponent<AttackTower>().cost;
             case 3: return towersPrefabs[id].GetComponent<AttackLineTower>().cost;
+            case 4: return towersPrefabs[id].GetComponent<MeleeTower>().cost;
             default: return -1;
         }
     }

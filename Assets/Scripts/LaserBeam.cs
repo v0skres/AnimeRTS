@@ -4,19 +4,19 @@ using UnityEngine;
 
 public class LaserBeam : MonoBehaviour
 {
-    //FIELDS
-    //graphics (the sprite renderer)
-    public Transform graphics;
-    //damage
+    [Header("Combat Settings")]
     public int damage;
-    //speed
-    public float flySpeed, rotateSpeed;
+    public float flySpeed;
+    public float rotateSpeed;
+
+    [Header("Visuals")]
+    public Transform graphics;
 
     //METHODS
     //Init
-    public void Init(int dmg)
+    public void Init(int damageAmount)
     {
-        damage = dmg;
+        damage = damageAmount;
     }
     //Trigger with enemy
     private void OnTriggerEnter2D(Collider2D collision)
@@ -44,6 +44,6 @@ public class LaserBeam : MonoBehaviour
     }
     void FlyForward()
     {
-        transform.Translate(transform.right * flySpeed * Time.deltaTime);
+        transform.Translate(transform.right * flySpeed * Time.deltaTime, Space.World);
     }
 }

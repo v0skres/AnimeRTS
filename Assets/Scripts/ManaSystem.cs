@@ -5,26 +5,48 @@ using UnityEngine.UI;
 
 public class ManaSystem : MonoBehaviour
 {
-    //FIELDS
-    //currency txt UI
+    public static ManaSystem instance;
+
+    [Header("UI")]
     public Text Text_Mana;
-    //default currency value
-    public int defaultMana;
-    //current currency value
-    public int mana;
+    public GameObject manaGainEffect;
+
+    [Header("Settings")]
+    public int defaultMana = 10;
+    [SerializeField] private int _mana;
+
+    public int Mana => _mana;
 
 
     //METHODS
     //Init (set the default values)
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
     public void Init()
     {
-        mana = defaultMana;
+        _mana = defaultMana;
         UpdateUI();
     }
     //Gain currency (input of value)
     public void Gain(int val)
     {
         mana += val;
+
+        if (manaGainEffect != null)
+        {
+            Instantiate(manaGainEffect, transform.position, Quaternion.identity);
+        }
+
         UpdateUI();
     }
     //Use currency (input of value)
@@ -32,32 +54,20 @@ public class ManaSystem : MonoBehaviour
     {
         if (EnoughCurrency(val))
         {
-            mana -= val;
+            if (!EnoughCurrency(val)) return false;
+
+            _mana -= val;
             UpdateUI();
             return true;
         }
-        else
-        {
-            return false;
-        }
     }
     //Check availability of currency
-    public bool EnoughCurrency(int val)
-    {
-        //Check if the val is equal or more than currency
-        if (val <= mana)
-            return true;
-        else
-            return false;
-    }
+    public bool EnoughCurrency(int val) => val <= _mana;
+
     //Update txt ui
     void UpdateUI()
     {
-        Text_Mana.text = mana.ToString();
-    }
-
-    public void USE_TEST()
-    {
-        Debug.Log(Use(3));
+        if (Text_Mana != null)
+            Text_Mana.text = _mana.ToString();
     }
 }

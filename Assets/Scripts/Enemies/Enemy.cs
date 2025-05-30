@@ -6,6 +6,15 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour, IEnemy
 {
+    public static event Action<Enemy> OnEnemyDeath;
+    [SerializeField] private int manaReward = 5;
+    private float _originalSpeed;
+    private Color _originalColor;
+    private float _originalDrag;
+    private bool _isSlowed = false;
+
+    protected Rigidbody2D rb;
+    protected Collider2D enemyCollider;
     public int MaxHealth
     {
         get => _maxHealth;
@@ -23,7 +32,7 @@ public class Enemy : MonoBehaviour, IEnemy
     public virtual float Speed
     {
         get => _speed;
-        protected set => _speed = value;
+        set => _speed = value;
     }
     [SerializeField] private float _speed;
 
@@ -67,7 +76,16 @@ public class Enemy : MonoBehaviour, IEnemy
         get => _currentLine;
         set => _currentLine = value;
     }
+
     [SerializeField] private Line _currentLine;
+
+    public EnemyType Type
+    {
+        get => _type;
+        protected set => _type = value;
+    }
+
+    [SerializeField] private EnemyType _type;
 
     public int Weight
     {
@@ -81,7 +99,22 @@ public class Enemy : MonoBehaviour, IEnemy
     protected virtual void Start()
     {
         IsAlive = true;
+        _originalSpeed = _speed;
+        rb = GetComponent<Rigidbody2D>();
+        enemyCollider = GetComponent<Collider2D>();
 
+        if (rb == null)
+        {
+            rb = gameObject.AddComponent<Rigidbody2D>();
+            rb.isKinematic = false;
+            rb.gravityScale = 0;
+            rb.freezeRotation = true;
+        }
+
+        if (enemyCollider == null)
+        {
+            enemyCollider = gameObject.AddComponent<BoxCollider2D>();
+        }
     }
 
     protected virtual void Update()
@@ -110,18 +143,29 @@ public class Enemy : MonoBehaviour, IEnemy
     {
         CurrentHealth = 0;
         IsAlive = false;
-        CurrentLine.Enemies.Remove(this);
+        if (ManaSystem.instance != null)
+        {
+            ManaSystem.instance.Gain(manaReward);
+        }
+        else
+        {
+            Debug.LogWarning("ManaSystem instance not found!");
+        }
+
         OnDeath(this, new EventArgs());
         Destroy(gameObject);
     }
 
     public virtual void Move()
     {
-        if (IsAlive && CanMove)
+        if (IsAlive)
         {
             var linePos = CurrentLine.PositionY + CurrentLine.LineOffset;
-            transform.position = new Vector3(transform.position.x, linePos);
-            transform.position = Vector3.MoveTowards(transform.position, new Vector3(-10000, linePos), Time.deltaTime * Speed);
+            Vector2 targetPosition = new Vector2(-10000, linePos);
+
+            // Используем физику для движения
+            Vector2 direction = (targetPosition - (Vector2)transform.position).normalized;
+            rb.velocity = direction * Speed;
         }
     }
 
@@ -137,22 +181,68 @@ public class Enemy : MonoBehaviour, IEnemy
 
     protected virtual void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.TryGetComponent(out ITower tower))
+        if (other.CompareTag("ProtectedObject"))
         {
-            CanMove = false;
-
-            StartCoroutine(AttackCoroutine(tower));
+            Debug.Log("Enemy reached protected object!");
+            GameOver.Instance?.GameOver1();
+            Destroy(gameObject); // Уничтожаем врага после достижения цели
         }
     }
 
-    protected virtual void OnTriggerExit2D(Collider2D collision)
+    protected virtual void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.TryGetComponent(out ITower tower))
+        if (collision.gameObject.TryGetComponent<DefenseTower>(out var tower))
         {
-            CanMove = true;
-
-            StopCoroutine(AttackCoroutine(tower));
+            rb.velocity = Vector2.zero;
         }
+    }
+
+    public void ApplySlow(float factor, float duration)
+    {
+        if (_isSlowed) return;
+
+        _isSlowed = true;
+        _speed = _originalSpeed * factor;
+
+        var sr = GetComponent<SpriteRenderer>();
+        if (sr != null)
+        {
+            _originalColor = sr.color;
+            sr.color = Color.cyan;
+        }
+
+        if (TryGetComponent<Rigidbody2D>(out var rb))
+        {
+            _originalDrag = rb.drag;
+            rb.drag = 10f;
+        }
+
+        StartCoroutine(ResetAfterDelay(duration));
+    }
+
+    public void ResetSlow()
+    {
+        if (!_isSlowed) return;
+
+        _speed = _originalSpeed;
+        _isSlowed = false;
+
+        var sr = GetComponent<SpriteRenderer>();
+        if (sr != null)
+        {
+            sr.color = _originalColor;
+        }
+
+        if (TryGetComponent<Rigidbody2D>(out var rb))
+        {
+            rb.drag = _originalDrag;
+        }
+    }
+
+    private IEnumerator ResetAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        ResetSlow();
     }
 
     protected IEnumerator AttackCoroutine(ITower tower)
