@@ -67,6 +67,12 @@ public class Enemy : MonoBehaviour, IEnemy
     }
     [SerializeField] private bool _isAlive;
 
+    public bool CanMove
+    {
+        get => _canMove;
+        protected set => _canMove = value;
+    }
+    [SerializeField] private bool _canMove = true;
 
     public Line CurrentLine
     {
@@ -207,7 +213,7 @@ public class Enemy : MonoBehaviour, IEnemy
         tower.LoseHealth(Damage);
     }
 
-    protected virtual void OnTriggerEnter2D(Collider2D collision)
+    protected virtual void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("ProtectedObject"))
         {

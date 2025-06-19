@@ -40,7 +40,7 @@ public class ManaSystem : MonoBehaviour
     //Gain currency (input of value)
     public void Gain(int val)
     {
-        mana += val;
+        _mana += val;
 
         if (manaGainEffect != null)
         {
@@ -52,14 +52,11 @@ public class ManaSystem : MonoBehaviour
     //Use currency (input of value)
     public bool Use(int val)
     {
-        if (EnoughCurrency(val))
-        {
-            if (!EnoughCurrency(val)) return false;
+        if (!EnoughCurrency(val)) return false;
 
-            _mana -= val;
-            UpdateUI();
-            return true;
-        }
+        _mana -= val;
+        UpdateUI();
+        return true;
     }
     //Check availability of currency
     public bool EnoughCurrency(int val) => val <= _mana;

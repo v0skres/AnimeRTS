@@ -69,7 +69,7 @@ public class LaserBeam : MonoBehaviour
     void FlyForward() => transform.Translate(transform.right * flySpeed * Time.deltaTime, Space.World);
 
     //Trigger with enemy
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.TryGetComponent(out IEnemy enemy))
         {

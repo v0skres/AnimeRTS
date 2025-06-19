@@ -133,7 +133,7 @@ public class Spawner : MonoBehaviour, IPointerClickHandler
     {
         switch (id)
         {
-            case 0: return towersPrefabs[id].GetComponent<MoneyTower>().cost;
+            //case 0: return towersPrefabs[id].GetComponent<MoneyTower>().cost;
             case 1: return towersPrefabs[id].GetComponent<DefenseTower>().cost;
             case 2: return towersPrefabs[id].GetComponent<AttackTower>().cost;
             case 3: return towersPrefabs[id].GetComponent<AttackLineTower>().cost;
