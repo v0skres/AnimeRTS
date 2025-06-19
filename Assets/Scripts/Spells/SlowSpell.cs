@@ -6,7 +6,9 @@ public class SlowSpell : MonoBehaviour, ISpell
 {
     [Header("Cost Settings")]
     [SerializeField] private int _manaCost = 7;
+    [SerializeField] private float _cooldownTime = 15f; // Время перезарядки в секундах
     public int ManaCost => _manaCost;
+    public float CooldownTime => _cooldownTime;
 
     [Header("Slow Settings")]
     public float radius = 4f;

@@ -6,7 +6,9 @@ public class DamageBuffSpell : MonoBehaviour, ISpell
 {
     [Header("Cost Settings")]
     [SerializeField] private int _manaCost = 10;
+    [SerializeField] private float _cooldownTime = 5f; // Время перезарядки в секундах
     public int ManaCost => _manaCost;
+    public float CooldownTime => _cooldownTime;
 
     [Header("Buff Settings")]
     public float radius = 5f;

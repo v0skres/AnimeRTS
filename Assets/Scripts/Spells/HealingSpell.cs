@@ -5,9 +5,11 @@ using UnityEngine;
 public class HealingSpell : MonoBehaviour, ISpell
 {
     [SerializeField] private int _manaCost = 15;
+    [SerializeField] private float _cooldownTime = 20f; // Время перезарядки в секундах
     public int healAmount = 5;
 
     public int ManaCost => _manaCost;
+    public float CooldownTime => _cooldownTime;
 
     public void Activate()
     {

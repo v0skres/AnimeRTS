@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class LaserBeam : MonoBehaviour
@@ -8,6 +6,9 @@ public class LaserBeam : MonoBehaviour
     public int damage;
     public float flySpeed;
     public float rotateSpeed;
+
+    private bool _isPaused = false;
+    private Vector2 _savedVelocity;
 
     [Header("Visuals")]
     public Transform graphics;
@@ -18,32 +19,67 @@ public class LaserBeam : MonoBehaviour
     {
         damage = damageAmount;
     }
+
+    public void SetPaused(bool paused)
+    {
+        _isPaused = paused;
+
+        Rigidbody2D rb = GetComponent<Rigidbody2D>();
+        if (rb != null)
+        {
+            if (paused)
+            {
+                _savedVelocity = rb.velocity;
+                rb.velocity = Vector2.zero;
+                rb.isKinematic = true;
+            }
+            else
+            {
+                rb.isKinematic = false;
+                rb.velocity = _savedVelocity;
+            }
+        }
+
+        // Для аниматоров
+        Animator anim = GetComponent<Animator>();
+        if (anim != null)
+        {
+            anim.enabled = !paused;
+        }
+
+        // Для частиц
+        ParticleSystem ps = GetComponent<ParticleSystem>();
+        if (ps != null)
+        {
+            if (paused) ps.Pause();
+            else ps.Play();
+        }
+    }
+
+    void Update()
+    {
+        if (_isPaused) return;
+
+        Rotate();
+        FlyForward();
+    }
+
+    void Rotate() => graphics.Rotate(0, 0, -rotateSpeed * Time.deltaTime);
+
+    void FlyForward() => transform.Translate(transform.right * flySpeed * Time.deltaTime, Space.World);
+
     //Trigger with enemy
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.TryGetComponent(out IEnemy enemy))
+        if (other.TryGetComponent(out IEnemy enemy))
         {
-            Debug.Log("Shot the enemy");
             enemy.TakeDamage(damage);
             Destroy(gameObject);
         }
-        if (collision.tag == "Out")
+        else if (other.CompareTag("Out"))
         {
             Destroy(gameObject);
         }
     }
     //Handle rotation and flying
-    void Update()
-    {
-        Rotate();
-        FlyForward();
-    }
-    void Rotate()
-    {
-        graphics.Rotate(new Vector3(0, 0, -rotateSpeed * Time.deltaTime));
-    }
-    void FlyForward()
-    {
-        transform.Translate(transform.right * flySpeed * Time.deltaTime, Space.World);
-    }
 }

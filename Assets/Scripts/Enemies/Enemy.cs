@@ -13,6 +13,9 @@ public class Enemy : MonoBehaviour, IEnemy
     private float _originalDrag;
     private bool _isSlowed = false;
 
+    private bool _isPaused = false;
+    private Vector2 _savedVelocity;
+
     protected Rigidbody2D rb;
     protected Collider2D enemyCollider;
     public int MaxHealth
@@ -64,12 +67,6 @@ public class Enemy : MonoBehaviour, IEnemy
     }
     [SerializeField] private bool _isAlive;
 
-    public bool CanMove
-    {
-        get => _canMove;
-        protected set => _canMove = value;
-    }
-    [SerializeField] private bool _canMove = true;
 
     public Line CurrentLine
     {
@@ -117,9 +114,45 @@ public class Enemy : MonoBehaviour, IEnemy
         }
     }
 
+    public void SetPaused(bool paused)
+    {
+        _isPaused = paused;
+
+        Rigidbody2D rb = GetComponent<Rigidbody2D>();
+        if (rb != null)
+        {
+            if (paused)
+            {
+                _savedVelocity = rb.velocity;
+                rb.velocity = Vector2.zero;
+                rb.isKinematic = true;
+            }
+            else
+            {
+                rb.isKinematic = false;
+                rb.velocity = _savedVelocity;
+            }
+        }
+
+        // Для аниматоров
+        Animator anim = GetComponent<Animator>();
+        if (anim != null)
+        {
+            anim.enabled = !paused;
+        }
+
+        // Для частиц
+        ParticleSystem ps = GetComponent<ParticleSystem>();
+        if (ps != null)
+        {
+            if (paused) ps.Pause();
+            else ps.Play();
+        }
+    }
+
     protected virtual void Update()
     {
-
+        if (_isPaused) return;
     }
 
     protected virtual void FixedUpdate()
@@ -172,11 +205,6 @@ public class Enemy : MonoBehaviour, IEnemy
     public virtual void Attack(ITower tower)
     {
         tower.LoseHealth(Damage);
-    }
-
-    protected virtual void OnDeath(object sender, EventArgs e)
-    {
-        Death?.Invoke(this, e);
     }
 
     protected virtual void OnTriggerEnter2D(Collider2D collision)
@@ -252,5 +280,10 @@ public class Enemy : MonoBehaviour, IEnemy
             Attack(tower);
             yield return new WaitForSeconds(AttackSpeed);
         }
+    }
+
+    protected virtual void OnDeath(object sender, EventArgs e)
+    {
+        Death?.Invoke(this, e);
     }
 }

@@ -8,6 +8,9 @@ public class ShootItem : MonoBehaviour
     public float flySpeed;
     public float rotateSpeed;
 
+    private bool _isPaused = false;
+    private Vector2 _savedVelocity;
+
     [Header("Физика")]
     public bool usePhysics = false; // Если нужно физическое движение
     private Rigidbody2D rb;
@@ -39,11 +42,10 @@ public class ShootItem : MonoBehaviour
     {
         if (collision.TryGetComponent(out IEnemy enemy))
         {
-            Debug.Log("Shot the enemy");
             enemy.TakeDamage(damage);
             DestroyProjectile();
         }
-        if (collision.CompareTag("Out"))
+        else if (collision.CompareTag("Out"))
         {
             DestroyProjectile();
         }
@@ -58,9 +60,47 @@ public class ShootItem : MonoBehaviour
         }
     }
 
+    public void SetPaused(bool paused)
+    {
+        _isPaused = paused;
+
+        Rigidbody2D rb = GetComponent<Rigidbody2D>();
+        if (rb != null)
+        {
+            if (paused)
+            {
+                _savedVelocity = rb.velocity;
+                rb.velocity = Vector2.zero;
+                rb.isKinematic = true;
+            }
+            else
+            {
+                rb.isKinematic = false;
+                rb.velocity = _savedVelocity;
+            }
+        }
+
+        // Для аниматоров
+        Animator anim = GetComponent<Animator>();
+        if (anim != null)
+        {
+            anim.enabled = !paused;
+        }
+
+        // Для частиц
+        ParticleSystem ps = GetComponent<ParticleSystem>();
+        if (ps != null)
+        {
+            if (paused) ps.Pause();
+            else ps.Play();
+        }
+    }
+
     //Handle rotation and flying
     void Update()
     {
+        if (_isPaused) return;
+
         if (!usePhysics)
         {
             Rotate();
